@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList,TouchableOpacity } from "react-native"
 import { useSelector, useDispatch } from "react-redux";
 import { fetchContactsAsync } from "../../store/contactSlice";
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native'; 
 
 const Dashboard = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,11 @@ const Dashboard = ({ navigation }) => {
       dispatch(fetchContactsAsync());
     }
   }, [status, dispatch]);
-
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(fetchContactsAsync());
+    }, [])
+  );
   if (status === 'loading') {
     return <Text>Loading...</Text>;
   }

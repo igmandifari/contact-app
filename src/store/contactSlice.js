@@ -1,33 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-
-const fetchContacts = async () => {
-  try {
-    const response = await fetch('https://contact.herokuapp.com/contact');
-    const data = await response.json();
-    return data.data; 
-  } catch (error) {
-    console.error('Error fetching contacts:', error);
-    throw error;
-  }
-};
-
-const addContact = async (contactData) => {
-  try {
-    const response = await fetch('https://contact.herokuapp.com/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(contactData),
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error adding contact:', error);
-    throw error;
-  }
-};
+import { fetchContacts,addContact } from '../services/services';
 
 export const fetchContactsAsync = createAsyncThunk(
   'contacts/fetchContacts',
@@ -36,7 +8,6 @@ export const fetchContactsAsync = createAsyncThunk(
     return response;
   }
 );
-
 export const addContactAsync = createAsyncThunk(
   'contacts/addContact',
   async (contactData) => {
@@ -44,7 +15,6 @@ export const addContactAsync = createAsyncThunk(
     return response;
   }
 );
-
 
 const contactSlice = createSlice({
   name: 'contacts',
