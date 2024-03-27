@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { addContactAsync } from "../../store/contactSlice";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 
 const AddContact = () => {
   const dispatch = useDispatch();
@@ -19,20 +20,37 @@ const AddContact = () => {
   const [age, setAge] = useState("");
   const [photo, setPhoto] = useState(null);
 
-  const handleSubmit = () => {
-    dispatch(
-      addContactAsync({
-        firstName,
-        lastName,
-        age: parseInt(age),
-        photo,
-      })
-    );
+  const handleSubmit = async () => {
+    let photoUrl = ""; // Inisialisasi URL foto
+  
+    // Jika ada foto dipilih
+    if (photo) {
+      try {
+        photoUrl = photo.uri; // Gunakan URL foto dari ImagePicker
+      } catch (error) {
+        console.log("Error setting photo URL:", error);
+      }
+    }
+  
+    // Buat objek kontak
+    const contact = {
+      firstName: firstName,
+      lastName: lastName,
+      age: parseInt(age),
+      photo: photoUrl,
+    };
+    console.log(contact);
+    // Kirim data ke Redux
+    dispatch(addContactAsync(contact));
+  
+    // Bersihkan input setelah pengiriman
     setFirstName("");
     setLastName("");
     setAge("");
     setPhoto(null);
   };
+  
+  
 
   const handleCancel = () => {
     setFirstName("");
@@ -43,31 +61,89 @@ const AddContact = () => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [6, 6],
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setPhoto(result.uri);
+    if (!result.canceled) {
+      setPhoto(result.assets[0].uri);
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Add Contact</Text>
+        <Text style={styles.headerText}>Add Contacts</Text>
       </View>
 
-      <Text style={styles.contactText}>choose Picture</Text>
-      <TouchableOpacity onPress={pickImage} style={styles.photoContainer}>
-        {photo ? (
-          <Image source={{ uri: photo }} style={styles.photo} />
-        ) : (
-          <Ionicons name="camera-outline" size={48} color="#333" />
-        )}
-      </TouchableOpacity>
+      <View>
+        <View
+          style={{
+            justifyContent: "center",
+            flexDirection: "row",
+          }}
+        >
+          {photo ? (
+            <View style={{ gap: 5, alignItems: "flex-start" }}>
+              <Image
+                source={{ uri: photo }}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "orange",
+                  flexDirection: "row",
+                  paddingHorizontal: 4,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                }}
+                onPress={() => {
+                  pickImage();
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "500",
+                    color: "black",
+                  }}
+                >
+                  Change
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  width: 100,
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 2,
+                  borderRadius: 100,
+                  borderColor: "black",
+                  borderStyle: "solid",
+                  borderWidth: 2,
+                  borderColor: "black",
+                }}
+                onPress={() => pickImage()}
+              >
+                <Ionicons name="camera-outline" size={48} color="#333" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
       <View style={styles.inputContainer}>
         <Ionicons
           name="person-outline"
@@ -138,28 +214,6 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 25,
     fontWeight: "bold",
-  },
-  contactText: {
-    color: "#000",
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  photoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-    alignSelf: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
-  },
-  photo: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 50,
   },
   inputContainer: {
     flexDirection: "row",
