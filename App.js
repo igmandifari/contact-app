@@ -4,11 +4,17 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "./src/pages/Dashboard";
 import { Provider } from "react-redux";
 import store from "./src/store/store";
+import AddContact from "./src/pages/AddContact";
 
 const routerList = [
   {
     name: "dashboard",
     component: Dashboard,
+    headerShown: false,
+  },
+  {
+    name: "add-contact",
+    component: AddContact,
     headerShown: false,
   },
 ];

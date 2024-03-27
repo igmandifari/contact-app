@@ -1,17 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Dimensions,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Button,
-  FlatList
-} from "react-native";
-import { useSelector,useDispatch } from "react-redux";
+import { View, Text, StyleSheet, FlatList,TouchableOpacity } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchContactsAsync } from "../../store/contactSlice";
+import { Ionicons } from '@expo/vector-icons';
 
 const Dashboard = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -33,32 +24,76 @@ const Dashboard = ({ navigation }) => {
   if (status === 'failed') {
     return <Text>Error: {error}</Text>;
   }
+
   return (
     <View style={styles.container}>
-    <Text>Phone</Text>
-    <Text>{contacts.length} contact with phone numbers</Text>
-      <View style={styles.bawah}>
-        <FlatList
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Phone</Text>
+        <Text style={styles.subHeaderText}>{contacts.length} contacts with id</Text>
+      </View>
+      <View style={styles.headerIcons}>
+          <TouchableOpacity onPress={()=> navigation.navigate('add-contact')}>
+            <Ionicons name="add" size={24} color="#000000" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Ionicons name="search" size={24} color="#000000" />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Ionicons name="ellipsis-vertical" size={24} color="#000000" />
+          </TouchableOpacity>
+        </View>
+      <FlatList
         data={contacts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View>
-            <Text>{item.firstName} {item.lastName}</Text>
+          <View style={styles.contactItem}>
+            <Text style={styles.contactName}>
+              {item.firstName} {item.lastName}
+            </Text>
           </View>
         )}
+        ListHeaderComponent={<View style={styles.listHeader} />}
       />
-      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 16,
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    header: {
+      paddingVertical: 50,
+      alignItems:"center"
+    },
+    headerText: {
+      color: '#000000',
+      fontSize: 25,
+      fontWeight: 'bold',
+    },
+    subHeaderText: {
+      color: '#000000',
+      fontSize: 14,
+    },
+    contactItem: {
+      backgroundColor: '#F5F5F5',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E0E0E0',
+    },
+    contactName: {
+      color: '#000000',
+      fontSize: 16,
+    },
+    listHeader: {
+      height: 16,
+    },
+    headerIcons: {
+        flexDirection: 'row',
+        marginLeft: 'auto',
+    },
+  });
 
 export default Dashboard;
