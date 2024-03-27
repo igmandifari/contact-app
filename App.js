@@ -1,20 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Dashboard from "./src/pages/Dashboard";
+import { Provider } from "react-redux";
+import store from "./src/store/store";
 
-export default function App() {
+const routerList = [
+  {
+    name: "dashboard",
+    component: Dashboard,
+    headerShown: false,
+  },
+];
+
+const Stack = createNativeStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {routerList.map((item, index) => {
+            return (
+              <Stack.Screen
+                key={index}
+                name={item.name}
+                component={item.component}
+                options={{ headerShown: item.headerShown }}
+                initialParams={{ isSuccess: false }}
+              />
+            );
+          })}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
