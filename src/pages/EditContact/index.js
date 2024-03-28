@@ -3,21 +3,18 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "reac
 import { useSelector, useDispatch } from "react-redux";
 import { updateContactAsync } from "../../store/contactSlice";
 import { Ionicons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker"; // Import ImagePicker
-import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from "expo-image-picker"; 
 
 const EditContact = ({ route, navigation }) => {
   const { contact } = route.params;
   const dispatch = useDispatch();
 
-  // Extracting contact details
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [age, setAge] = useState(contact.age ? contact.age.toString() : "");
-  const [photo, setPhoto] = useState(contact.photo); // Set initial photo if exists
+  const [photo, setPhoto] = useState(contact.photo); 
 
   useEffect(() => {
-    // Load contact data when component mounts or when contact changes
     setFirstName(contact.firstName);
     setLastName(contact.lastName);
     setAge(contact.age ? contact.age.toString() : "");
@@ -44,17 +41,15 @@ const EditContact = ({ route, navigation }) => {
       .then(() => {
         alert("Succes Edit Contact");
         navigation.goBack();
-        navigation.navigate('dashboard'); // Navigasi ke dashboard setelah sukses
+        navigation.navigate('dashboard'); 
       })
       .catch((error) => {
-        // Tangani kesalahan jika ada
         console.error('Error updating contact:', error);
-        // Tampilkan pesan kesalahan kepada pengguna
         alert('Failed to update contact. Please try again later.');
       });
   };
 
-  const handleChoosePhoto = async () => { // Function to choose photo
+  const handleChoosePhoto = async () => { 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -95,7 +90,7 @@ const EditContact = ({ route, navigation }) => {
                   borderRadius: 10,
                 }}
                 onPress={() => {
-                  handleChoosePhoto(); // Perubahan di sini
+                  handleChoosePhoto(); 
                 }}
               >
                 <Text
@@ -130,7 +125,7 @@ const EditContact = ({ route, navigation }) => {
                   borderWidth: 2,
                   borderColor: "black",
                 }}
-                onPress={() => handleChoosePhoto()} // Perubahan di sini
+                onPress={() => handleChoosePhoto()} 
               >
                 <Ionicons name="camera-outline" size={48} color="#333" />
               </TouchableOpacity>

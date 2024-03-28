@@ -21,7 +21,6 @@ const AddContact = () => {
   const [photo, setPhoto] = useState(null);
 
   const handleSubmit = async () => {
-    // Buat objek kontak
     const contact = {
       firstName: firstName,
       lastName: lastName,
@@ -41,9 +40,7 @@ const AddContact = () => {
   const uploadToImgur = async () => {
     try {
       const formData = photo;
-      // formData.append("image");
       console.log(formData);
-      // Kirim permintaan ke Imgur API
       const response = await fetch("https://api.imgur.com/3/image", {
         method: "POST",
         headers: {
@@ -57,7 +54,6 @@ const AddContact = () => {
         throw new Error(`HTTP error ${response.status}`);
       }
 
-      // Ambil URL gambar dari respons dan atur ke state
       const data = await response.json();
       const imgurLink = data.data.link;
       setImgurUrl(imgurLink);

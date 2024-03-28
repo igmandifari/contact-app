@@ -1,22 +1,34 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from '@react-navigation/native';
+import { deleteContactAsync } from "../../store/contactSlice";
 
 const Profile = ({ route, navigation }) => {
   const { contactId } = route.params;
   const contacts = useSelector((state) => state.contacts.contacts);
+  const dispatch = useDispatch();
   const [contact, setContact] = useState(null);
   const [photo, setPhoto] = useState(null);
 
   const loadContact = useCallback(() => {
     const loadedContact = contacts.find((c) => c.id === contactId);
     setContact(loadedContact);
-    setPhoto(loadedContact.photo); // Set photo from contact data
+    setPhoto(loadedContact.photo); 
   }, [contactId, contacts]);
 
   useFocusEffect(loadContact);
+
+  const handleDeleteContact = () => {
+    dispatch(deleteContactAsync(contactId))
+      .then(() => {
+      })
+      .catch((error) => {
+        console.error('Error deleting contact:', error);
+        alert('Failed to delete contact. Please try again later.');
+      });
+  };
 
   if (!contact) {
     return null;
@@ -58,7 +70,7 @@ const Profile = ({ route, navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleDeleteContact}>
           <Ionicons name="trash-outline" size={24} color="#000000" />
         </TouchableOpacity>
         <TouchableOpacity

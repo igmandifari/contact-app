@@ -22,31 +22,22 @@ const Dashboard = ({ navigation }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [filteredContacts, setFilteredContacts] = useState([]);
 
-  // Membuat salinan baru dari array contacts
-  // Membuat salinan baru dari array contacts jika contacts tidak undefined
   const sortedContacts = contacts ? [...contacts] : [];
 
-  // Mengurutkan salinan array jika sortedContacts tidak kosong
+
   if (sortedContacts.length > 0) {
     sortedContacts.sort((a, b) => {
-      // Logika pengurutan...
     });
   }
 
-  // Mengurutkan salinan array
   sortedContacts.sort((a, b) => {
-    // Urutkan berdasarkan nomor terlebih dahulu
     if (isNaN(parseInt(a.firstName)) && isNaN(parseInt(b.firstName))) {
-      // Jika keduanya bukan angka, urutkan berdasarkan huruf
       return a.firstName.localeCompare(b.firstName);
     } else if (!isNaN(parseInt(a.firstName)) && !isNaN(parseInt(b.firstName))) {
-      // Jika keduanya angka, urutkan berdasarkan nilai angka
       return parseInt(a.firstName) - parseInt(b.firstName);
     } else if (!isNaN(parseInt(a.firstName))) {
-      // Jika a adalah angka dan b bukan, a harus didahulukan
       return -1;
     } else {
-      // Jika b adalah angka dan a bukan, b harus didahulukan
       return 1;
     }
   });
@@ -56,10 +47,8 @@ const Dashboard = ({ navigation }) => {
     } else if (status === "succeeded") {
       const sortedContacts = [...contacts];
       sortedContacts.sort((a, b) => {
-        // Logika pengurutan...
       });
 
-      // Filter sortedContacts dan simpan hasilnya ke dalam filteredContacts
       const filtered = sortedContacts.filter((contact) => {
         const fullName =
           `${contact.firstName} ${contact.lastName}`.toLowerCase();
