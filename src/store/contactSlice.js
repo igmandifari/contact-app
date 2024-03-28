@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchContacts,addContact } from '../services/services';
+import { fetchContacts, addContact, updateContact, deleteContact } from '../services/services';
 
 export const fetchContactsAsync = createAsyncThunk(
   'contacts/fetchContacts',
@@ -8,10 +8,27 @@ export const fetchContactsAsync = createAsyncThunk(
     return response;
   }
 );
+
 export const addContactAsync = createAsyncThunk(
   'contacts/addContact',
   async (contactData) => {
     const response = await addContact(contactData);
+    return response;
+  }
+);
+
+export const updateContactAsync = createAsyncThunk(
+  'contacts/updateContact',
+  async ({ contactId, updatedContactData }) => {
+    const response = await updateContact(contactId, updatedContactData);
+    return response;
+  }
+);
+
+export const deleteContactAsync = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId) => {
+    const response = await deleteContact(contactId);
     return response;
   }
 );
@@ -44,6 +61,26 @@ const contactSlice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(addContactAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(updateContactAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateContactAsync.fulfilled, (state) => {
+        state.status = 'succeeded';
+      })
+      .addCase(updateContactAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteContactAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(deleteContactAsync.fulfilled, (state) => {
+        state.status = 'succeeded';
+      })
+      .addCase(deleteContactAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

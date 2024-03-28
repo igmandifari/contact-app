@@ -24,3 +24,26 @@ export const addContact = async (contactData) => {
     throw error;
   }
 };
+export const updateContact = async (contactId, updatedContactData) => {
+  try {
+    const response = await axiosInstance.put(`${baseurl}/${contactId}`, updatedContactData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating contact with ID ${contactId}:`, error);
+    throw error;
+  }
+};
+
+export const deleteContact = async (contactId) => {
+  try {
+    const response = await axiosInstance.delete(`${baseurl}/${contactId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error deleting contact with ID ${contactId}:`, error);
+    throw error;
+  }
+};

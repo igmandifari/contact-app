@@ -1,41 +1,60 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { updateContactAsync } from "../../store/contactSlice";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker"; // Import ImagePicker
+import { useNavigation } from '@react-navigation/native';
 
 const EditContact = ({ route, navigation }) => {
   const { contact } = route.params;
   const dispatch = useDispatch();
-  const contacts = useSelector((state) => state.contacts.contacts);
-  // const contact = contacts.find((c) => c.id === contact);
 
+  // Extracting contact details
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [age, setAge] = useState(contact.age ? contact.age.toString() : "");
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState(contact.photo); // Set initial photo if exists
+
+  useEffect(() => {
+    // Load contact data when component mounts or when contact changes
+    setFirstName(contact.firstName);
+    setLastName(contact.lastName);
+    setAge(contact.age ? contact.age.toString() : "");
+    setPhoto(contact.photo);
+  }, [contact]);
+
+  const handleCancel = () => {
+    setFirstName("");
+    setLastName("");
+    setAge("");
+    setPhoto(null);
+  };
 
   const handleUpdate = () => {
+    const { id } = contact;
     const updatedContact = {
-      ...contact,
       firstName,
       lastName,
       age: Number(age),
       photo,
     };
-    dispatch(updateContactAsync(updatedContact));
-    alert("Contact updated successfully");
-    navigation.goBack();
+  
+    dispatch(updateContactAsync({ contactId: id, updatedContactData: updatedContact }))
+      .then(() => {
+        alert("Succes Edit Contact");
+        navigation.goBack();
+        navigation.navigate('dashboard'); // Navigasi ke dashboard setelah sukses
+      })
+      .catch((error) => {
+        // Tangani kesalahan jika ada
+        console.error('Error updating contact:', error);
+        // Tampilkan pesan kesalahan kepada pengguna
+        alert('Failed to update contact. Please try again later.');
+      });
   };
 
-  const handleChoosePhoto = async () => {
+  const handleChoosePhoto = async () => { // Function to choose photo
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -43,15 +62,10 @@ const EditContact = ({ route, navigation }) => {
       quality: 1,
     });
     if (!result.cancelled) {
-      setPhoto(result);
+      setPhoto(result.uri); // Set chosen photo
     }
   };
-  const handleCancel = () => {
-    setFirstName("");
-    setLastName("");
-    setAge("");
-    setPhoto(null);
-  };
+
 
   return (
     <View style={styles.container}>

@@ -1,24 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { updateContactAsync } from "../../store/contactSlice";
+import { useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from '@react-navigation/native';
 
 const Profile = ({ route, navigation }) => {
   const { contactId } = route.params;
-  const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.contacts);
-  const contact = contacts.find((c) => c.id === contactId);
-  const [firstName, setFirstName] = useState(contact.firstName);
-  const [lastName, setLastName] = useState(contact.lastName);
-  const [age, setAge] = useState(contact.age ? contact.age.toString() : "");
+  const [contact, setContact] = useState(null);
   const [photo, setPhoto] = useState(null);
+
+  const loadContact = useCallback(() => {
+    const loadedContact = contacts.find((c) => c.id === contactId);
+    setContact(loadedContact);
+    setPhoto(loadedContact.photo); // Set photo from contact data
+  }, [contactId, contacts]);
+
+  useFocusEffect(loadContact);
+
+  if (!contact) {
+    return null;
+  }
+
+  const { firstName, lastName, age, phone } = contact;
 
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.avatarContainer}>
         {photo ? (
-          <Image source={{ uri: photo.uri }} style={styles.avatar} />
+          <Image source={{ uri: photo }} style={styles.avatar} />
         ) : (
           <Ionicons name="person-circle-outline" size={96} color="#000000" />
         )}
@@ -26,8 +36,7 @@ const Profile = ({ route, navigation }) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.name}>{`${firstName} ${lastName}`}</Text>
         <Text style={styles.age}>{`${age}`} Years Old</Text>
-
-        <Text style={styles.phone}>{contact.phone}</Text>
+        <Text style={styles.phone}>{phone}</Text>
       </View>
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.actionButton}>
