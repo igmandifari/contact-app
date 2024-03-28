@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateContactAsync } from '../../store/contactSlice';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+} from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { updateContactAsync } from "../../store/contactSlice";
+import { Ionicons } from "@expo/vector-icons";
 
 const EditContact = ({ route, navigation }) => {
   const { contact } = route.params;
@@ -11,13 +19,19 @@ const EditContact = ({ route, navigation }) => {
 
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
-  const [age, setAge] = useState(contact.age ? contact.age.toString() : '');
+  const [age, setAge] = useState(contact.age ? contact.age.toString() : "");
   const [photo, setPhoto] = useState(null);
 
   const handleUpdate = () => {
-    const updatedContact = { ...contact, firstName, lastName, age: Number(age),photo };
+    const updatedContact = {
+      ...contact,
+      firstName,
+      lastName,
+      age: Number(age),
+      photo,
+    };
     dispatch(updateContactAsync(updatedContact));
-    alert('Contact updated successfully');
+    alert("Contact updated successfully");
     navigation.goBack();
   };
 
@@ -32,38 +46,135 @@ const EditContact = ({ route, navigation }) => {
       setPhoto(result);
     }
   };
+  const handleCancel = () => {
+    setFirstName("");
+    setLastName("");
+    setAge("");
+    setPhoto(null);
+  };
 
   return (
     <View style={styles.container}>
-          <Button style={styles.button} color="black" title="Choose Photo" onPress={handleChoosePhoto} />
-      <Text style={styles.label}>{photo ? photo.uri : 'No photo'}</Text>
-      <Text style={styles.label}>First Name:</Text>
-      <TextInput
-        style={styles.input}
-        value={firstName}
-        onChangeText={setFirstName}
-      />
-      <Text style={styles.label}>Last Name:</Text>
-      <TextInput
-        style={styles.input}
-        value={lastName}
-        onChangeText={setLastName}
-      />
-      <Text style={styles.label}>Age:</Text>
-      <TextInput
-        style={styles.input}
-        value={age}
-        onChangeText={setAge}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Photo:</Text>
-
-      <Button
-        style={styles.button}
-        color="black"
-        title="Update Contact"
-        onPress={handleUpdate}
-      />
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Edit Contacts</Text>
+      </View>
+      <View>
+        <View
+          style={{
+            justifyContent: "center",
+            flexDirection: "row",
+            paddingBottom:50,
+          }}
+        >
+          {photo ? (
+            <View style={{ gap: 5, alignItems: "flex-start" }}>
+              <Image
+                source={{ uri: photo }}
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+              />
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "orange",
+                  flexDirection: "row",
+                  paddingHorizontal: 4,
+                  paddingVertical: 2,
+                  borderRadius: 10,
+                }}
+                onPress={() => {
+                  pickImage();
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "500",
+                    color: "black",
+                  }}
+                >
+                  Change
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  width: 100,
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 2,
+                  borderRadius: 100,
+                  borderColor: "black",
+                  borderStyle: "solid",
+                  borderWidth: 2,
+                  borderColor: "black",
+                }}
+                onPress={() => pickImage()}
+              >
+                <Ionicons name="camera-outline" size={48} color="#333" />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name="person-outline"
+          size={24}
+          color="#333"
+          style={styles.icon}
+        />
+        <TextInput
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={setFirstName}
+          style={styles.input}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name="person-outline"
+          size={24}
+          color="#333"
+          style={styles.icon}
+        />
+        <TextInput
+          placeholder="Last Name"
+          value={lastName}
+          onChangeText={setLastName}
+          style={styles.input}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name="calendar-outline"
+          size={24}
+          color="#333"
+          style={styles.icon}
+        />
+        <TextInput
+          placeholder="Age"
+          value={age}
+          onChangeText={setAge}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleCancel}>
+          <Text style={styles.buttonText}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleUpdate}>
+          <Text style={styles.buttonText}>Update</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -71,22 +182,56 @@ const EditContact = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#fff",
+    padding: 16,
+    alignItems: "center",
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginTop: 10,
   },
+  header: {
+    paddingVertical: 50,
+    alignItems: "center",
+  },
+  headerText: {
+    color: "#000000",
+    fontSize: 25,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 16,
+  },
+  icon: {
+    marginRight: 8,
+    color: "#333",
+  },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
+    flex: 1,
+    color: "#000",
+    fontSize: 16,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: "auto",
+    width: "50%",
   },
   button: {
-    color: '#000',
+    backgroundColor: "#333",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

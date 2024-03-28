@@ -83,6 +83,8 @@ const AddContact = () => {
           style={{
             justifyContent: "center",
             flexDirection: "row",
+            paddingBottom:50,
+
           }}
         >
           {photo ? (
