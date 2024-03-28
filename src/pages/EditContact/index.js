@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateContactAsync } from '../../store/contactSlice';
 
 const EditContact = ({ route, navigation }) => {
-  const { contactId } = route.params;
+  const { contact } = route.params;
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.contacts);
-  const contact = contacts.find((c) => c.id === contactId);
+  // const contact = contacts.find((c) => c.id === contact);
 
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
@@ -35,6 +35,8 @@ const EditContact = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+          <Button style={styles.button} color="black" title="Choose Photo" onPress={handleChoosePhoto} />
+      <Text style={styles.label}>{photo ? photo.uri : 'No photo'}</Text>
       <Text style={styles.label}>First Name:</Text>
       <TextInput
         style={styles.input}
@@ -55,8 +57,7 @@ const EditContact = ({ route, navigation }) => {
         keyboardType="numeric"
       />
       <Text style={styles.label}>Photo:</Text>
-      <Button style={styles.button} color="black" title="Choose Photo" onPress={handleChoosePhoto} />
-      <Text style={styles.label}>{photo ? photo.uri : 'No photo'}</Text>
+
       <Button
         style={styles.button}
         color="black"

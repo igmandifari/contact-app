@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "./src/store/store";
 import AddContact from "./src/pages/AddContact";
 import EditContact from "./src/pages/EditContact";
+import Profile from "./src/pages/Profile";
 
 const routerList = [
   {
@@ -21,6 +22,11 @@ const routerList = [
   {
     name: "edit-contact",
     component: EditContact,
+    headerShown: false,
+  },
+  {
+    name: "profile",
+    component: Profile,
     headerShown: false,
   },
 ];

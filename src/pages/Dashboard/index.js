@@ -138,7 +138,7 @@ const Dashboard = ({ navigation }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate("edit-contact", { contactId: item.id })
+              navigation.navigate("profile", { contactId: item.id })
             }
             style={styles.contactItem}
           >
