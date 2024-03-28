@@ -55,14 +55,14 @@ const EditContact = ({ route, navigation }) => {
   };
 
   const handleChoosePhoto = async () => { // Function to choose photo
-    const result = await ImagePicker.launchImageLibraryAsync({
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [6, 6],
       quality: 1,
     });
-    if (!result.cancelled) {
-      setPhoto(result.uri); // Set chosen photo
+    if (!result.canceled) {
+      setPhoto(result.assets[0].uri);
     }
   };
 
@@ -95,7 +95,7 @@ const EditContact = ({ route, navigation }) => {
                   borderRadius: 10,
                 }}
                 onPress={() => {
-                  pickImage();
+                  handleChoosePhoto(); // Perubahan di sini
                 }}
               >
                 <Text
@@ -130,7 +130,7 @@ const EditContact = ({ route, navigation }) => {
                   borderWidth: 2,
                   borderColor: "black",
                 }}
-                onPress={() => pickImage()}
+                onPress={() => handleChoosePhoto()} // Perubahan di sini
               >
                 <Ionicons name="camera-outline" size={48} color="#333" />
               </TouchableOpacity>

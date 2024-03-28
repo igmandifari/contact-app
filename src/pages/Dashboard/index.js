@@ -109,7 +109,7 @@ const Dashboard = ({ navigation }) => {
           <Ionicons name="add" size={24} color="#000000" />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("gurl")}>
           <Ionicons name="ellipsis-vertical" size={24} color="#000000" />
         </TouchableOpacity>
       </View>

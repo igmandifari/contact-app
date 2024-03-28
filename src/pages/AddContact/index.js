@@ -21,33 +21,50 @@ const AddContact = () => {
   const [photo, setPhoto] = useState(null);
 
   const handleSubmit = async () => {
-    let photoUrl = ""; // Inisialisasi URL foto
-  
-    // Jika ada foto dipilih
-    if (photo) {
-      try {
-        photoUrl = photo.uri; // Gunakan URL foto dari ImagePicker
-      } catch (error) {
-        console.log("Error setting photo URL:", error);
-      }
-    }
-  
     // Buat objek kontak
     const contact = {
       firstName: firstName,
       lastName: lastName,
       age: parseInt(age),
-      photo: photoUrl,
+      photo: photo, 
     };
-    console.log(contact);
-    // Kirim data ke Redux
-    dispatch(addContactAsync(contact));
   
-    // Bersihkan input setelah pengiriman
+    dispatch(addContactAsync(contact));
+    
     setFirstName("");
     setLastName("");
     setAge("");
     setPhoto(null);
+  
+  };
+
+  const uploadToImgur = async () => {
+    try {
+      const formData = photo;
+      // formData.append("image");
+      console.log(formData);
+      // Kirim permintaan ke Imgur API
+      const response = await fetch("https://api.imgur.com/3/image", {
+        method: "POST",
+        headers: {
+          Authorization: "Client-ID ba1e7f12939efbf",
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      // Ambil URL gambar dari respons dan atur ke state
+      const data = await response.json();
+      const imgurLink = data.data.link;
+      setImgurUrl(imgurLink);
+      console.log("Imgur URL:", imgurLink);
+    } catch (error) {
+      console.error("Error uploading image to Imgur:", error);
+    }
   };
   
   
@@ -66,7 +83,6 @@ const AddContact = () => {
       aspect: [6, 6],
       quality: 1,
     });
-
     if (!result.canceled) {
       setPhoto(result.assets[0].uri);
     }
@@ -144,6 +160,18 @@ const AddContact = () => {
             </View>
           )}
         </View>
+        {/* <TouchableOpacity
+          style={{
+            backgroundColor: "#333",
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            borderRadius: 8,
+            alignSelf: "center",
+          }}
+          onPress={() => uploadToImgur(photo)}
+        >
+          <Text style={{ color: "#fff", fontSize: 16 }}>Upload to Imgur</Text>
+        </TouchableOpacity> */}
       </View>
 
       <View style={styles.inputContainer}>
