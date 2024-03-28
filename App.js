@@ -7,7 +7,6 @@ import store from "./src/store/store";
 import AddContact from "./src/pages/AddContact";
 import EditContact from "./src/pages/EditContact";
 import Profile from "./src/pages/Profile";
-import UploadImageToImgur from "./src/pages/Gurl";
 
 const routerList = [
   {
@@ -29,12 +28,7 @@ const routerList = [
     name: "profile",
     component: Profile,
     headerShown: false,
-  },
-  {
-    name: "gurl",
-    component: UploadImageToImgur,
-    headerShown: false,
-  },
+  }
 ];
 
 const Stack = createNativeStackNavigator();
