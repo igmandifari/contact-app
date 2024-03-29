@@ -81,17 +81,19 @@ const EditContact = ({ route, navigation }) => {
                 source={{ uri: photo }}
                 style={{ width: 100, height: 100, borderRadius: 50 }}
               />
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{
                   backgroundColor: "orange",
                   flexDirection: "row",
                   paddingHorizontal: 4,
                   paddingVertical: 2,
                   borderRadius: 10,
+                  
                 }}
                 onPress={() => {
                   handleChoosePhoto(); 
                 }}
+                disabled={true}
               >
                 <Text
                   style={{
@@ -102,7 +104,7 @@ const EditContact = ({ route, navigation }) => {
                 >
                   Change
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           ) : (
             <View
@@ -126,6 +128,8 @@ const EditContact = ({ route, navigation }) => {
                   borderColor: "black",
                 }}
                 onPress={() => handleChoosePhoto()} 
+                disabled={true}
+
               >
                 <Ionicons name="camera-outline" size={48} color="#333" />
               </TouchableOpacity>
