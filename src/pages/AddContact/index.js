@@ -19,52 +19,70 @@ const AddContact = () => {
   const [lastName, setLastName] = useState("");
   const [age, setAge] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
+  const uploadToImgur = async () => {
+    try {
+      if (!photo) {
+        console.error('No image selected');
+        return;
+      }
+  
+      const clientID = 'ba1e7f12939efbf';
+  
+      const base64 = await FileSystem.readAsStringAsync(photo, { encoding: FileSystem.EncodingType.Base64 });
+      // console.log(base64);
+      const formData = new FormData();
+      formData.append('image', base64);
+      formData.append('type', 'base64');
+      formData.append('title', 'POC Proxy Upload Image');
+      formData.append('description', 'Trying proxy upload image');
+      
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          Authorization: `Client-ID ${clientID}`,
+        },
+        body: formData,
+      };  
+      // console.log("data",formData);
+      // console.log("cek");
+  
+      const response = await fetch('https://api.imgur.com/3/image', requestOptions);
+      // console.log(response);
+      const result = await response.json();
+      // console.log("result",result);
+      if (response.ok) {
+        // console.log('Upload successful', result);
+        const imageUrl = result.data.link;
+        console.log(imageUrl);
+        setImageUrl(imageUrl);
+        
+      } else {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error uploading image to Imgur:', error);
+    }
+  };
   const handleSubmit = async () => {
     const contact = {
       firstName: firstName,
       lastName: lastName,
       age: parseInt(age),
-      photo: photo, 
+      photo: imageUrl,
     };
-  
+
     dispatch(addContactAsync(contact));
-    
+
     setFirstName("");
     setLastName("");
     setAge("");
     setPhoto(null);
-  
-  };
-
-  const uploadToImgur = async () => {
-    try {
-      const formData = photo;
-      console.log(formData);
-      const response = await fetch("https://api.imgur.com/3/image", {
-        method: "POST",
-        headers: {
-          Authorization: "Client-ID ba1e7f12939efbf",
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-
-      const data = await response.json();
-      const imgurLink = data.data.link;
-      setImgurUrl(imgurLink);
-      console.log("Imgur URL:", imgurLink);
-    } catch (error) {
-      console.error("Error uploading image to Imgur:", error);
-    }
+    setImageUrl("")
   };
   
   
-
   const handleCancel = () => {
     setFirstName("");
     setLastName("");
@@ -95,8 +113,7 @@ const AddContact = () => {
           style={{
             justifyContent: "center",
             flexDirection: "row",
-            paddingBottom:50,
-
+            paddingBottom: 50,
           }}
         >
           {photo ? (
@@ -156,7 +173,7 @@ const AddContact = () => {
             </View>
           )}
         </View>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={{
             backgroundColor: "#333",
             paddingHorizontal: 16,
@@ -167,7 +184,7 @@ const AddContact = () => {
           onPress={() => uploadToImgur(photo)}
         >
           <Text style={{ color: "#fff", fontSize: 16 }}>Upload to Imgur</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.inputContainer}>
